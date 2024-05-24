@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gráfico de Linha Cruzada</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="lineChart"></canvas>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var Array1 = '{{get_rank_taxa.data.taxaCompraArray}}';
+      var Array2 = '{{get_rank_taxa.data.puCompraArray}}';
+      
+      Array1 = JSON.parse(Array1);
+      Array2 = JSON.parse(Array2);
+
+      var labels = Array1.map(function(item) {
+        return item.x;
+      });
+
+      var valuesArray1 = Array1.map(function(item) {
+        return item.y;
+      });
+
+      var valuesArray2 = Array2.map(function(item) {
+        return item.y;
+      });
+
+      var ctx = document.getElementById('lineChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Taxa de Compra',
+            data: valuesArray1,
+            borderColor: 'rgba(255, 0, 0, 1)', // Vermelho
+            backgroundColor: 'rgba(255, 0, 0, 0.2)',
+            borderWidth: 2,
+            pointRadius: 0, // Remove pontos
+            tension: 0.4, // Suaviza a linha
+            yAxisID: 'left-y-axis',
+          }, {
+            label: 'PU Compra',
+            data: valuesArray2,
+            borderColor: 'rgba(0, 0, 0, 1)', // Preto
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderWidth: 2,
+            pointRadius: 0, // Remove pontos
+            tension: 0.4, // Suaviza a linha
+            yAxisID: 'right-y-axis',
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            yAxes: [{
+              id: 'left-y-axis',
+              type: 'linear',
+              position: 'left',
+              ticks: {
+                beginAtZero: false,
+                callback: function(value) {
+                  return value.toFixed(2); // Formatação dos valores do eixo y esquerdo
+                },
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Taxa de Compra',
+              },
+              gridLines: {
+                drawOnChartArea: false, // Apenas linhas horizontais
+              }
+            }, {
+              id: 'right-y-axis',
+              type: 'linear',
+              position: 'right',
+              ticks: {
+                beginAtZero: false,
+                callback: function(value) {
+                  return value.toFixed(2); // Formatação dos valores do eixo y direito
+                },
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'PU Compra',
+              },
+              gridLines: {
+                drawOnChartArea: false, // Apenas linhas horizontais
+              }
+            }],
+            xAxes: [{
+              type: 'time',
+              time: {
+                unit: 'day',
+                tooltipFormat: 'DD/MM/YYYY',
+                displayFormats: {
+                  day: 'DD/MM/YYYY'
+                }
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'Data',
+              },
+              gridLines: {
+                drawOnChartArea: false, // Apenas linhas verticais
+              }
+            }]
+          },
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                usePointStyle: true,
+                boxWidth: 10,
+              },
+              position: 'top',
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+            },
+            hover: {
+              mode: 'nearest',
+              intersect: true,
+            },
+            zoom: {
+              zoom: {
+                enabled: false
+              },
+              pan: {
+                enabled: true,
+                mode: 'x',
+                speed: 10,
+                threshold: 10
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

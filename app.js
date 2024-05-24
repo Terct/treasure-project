@@ -10,6 +10,7 @@ const axios = require('axios');
 const crypto = require('crypto');
 
 
+const public = require('./public-app')
 const app = express();
 
 const port = 11111

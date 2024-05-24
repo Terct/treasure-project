@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gráfico de Linha com Marcadores nos Picos</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="lineChart" width="800" height="400"></canvas>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var data = '{{get_rank_taxa.data.puCompraArray}}';
+			data = JSON.parse(data)
+
+      var labels = data.map(function(item) {
+        return item.x;
+      });
+
+      var values = data.map(function(item) {
+        return item.y;
+      });
+
+      var peaks = [];
+      for (var i = 1; i < values.length - 1; i++) {
+        if (values[i] > values[i - 1] && values[i] > values[i + 1]) {
+          peaks.push(i);
+        }
+      }
+
+      var ctx = document.getElementById('lineChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Preço de Compra',
+            data: values,
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            borderWidth: 2,
+            pointRadius: 0,
+            pointStyle: 'rectRounded',
+            pointBackgroundColor: '#007bff',
+            pointBorderColor: '#007bff',
+            pointHitRadius: 10,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: '#007bff',
+            pointHoverBorderColor: '#007bff',
+            pointHoverBorderWidth: 2,
+            pointHoverBorderCapStyle: 'round',
+            pointHoverBorderDashOffset: 2,
+            pointHoverBorderJoinStyle: 'round',
+            showLine: true,
+            tension: 0.4,
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: false,
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)',
+              },
+            },
+            x: {
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)',
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+        },
+      });
+    });
+  </script>
+</body>
+</html>
